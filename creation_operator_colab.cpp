@@ -375,6 +375,9 @@ void reducing() {
 				rw.writeColumn2(array_of_cols[i], n);
 			}
 			cout << " columns have written " << j << '\n';
+
+
+			break;
 		}
 
 		///bool* j_col = new bool[n];
@@ -561,7 +564,7 @@ void process() {
 
 	cout << "reading intervals\n\n\n";
 
-	reading_intervals();
+	////reading_intervals();
 }
 
 
