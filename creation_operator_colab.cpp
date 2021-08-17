@@ -85,27 +85,14 @@ public:
 	}
 
 
-	//чтение матрицы размера size*size из файла
-	/*void readMatrix(vector<vector<int>>& arr, int size)
-	{
-		for (int i = 0; i < size; i++) {
-			vector<int> v(size, 0);
-			arr.push_back(v);
-			for (int j = 0; j < size; j++) {
-				fin >> arr[i][j];
-			}
-		}
-
-	}*/
-
 	void clear2File() {
-		f2.clear();
+		f2.close();
+		f2.open("m2.txt", ifstream::binary | ios::out);
 	}
 
 	//чтение массива ребер из файла
 	void readArray(vector<Edge>& arr)
 	{
-		string s;
 		string first, second;
 		int weight;
 		string region;
@@ -324,242 +311,6 @@ void create_dim1() {
 }
 
 
-void sortMatrix(vector<int>& times, int size) {
-
-	int am_col = vertexes + lines;
-	for (int i = 0; i < am_col - 1; i++) {
-		for (int j = 0; j < am_col - i - 1; j++) {
-			if (times[j] > times[j + 1]) {
-				// меняем элементы местами
-				int temp = times[j];
-				bool* vec_temp = new bool[n];
-				for (int count = 0; count < n; count++) {
-					vec_temp[count] = 0;
-				}
-				rw.readColumn(j, vec_temp, n); // с номером j хранится в temp
-
-				times[j] = times[j + 1];
-				bool* vec_jp1 = new bool[n];
-				for (int count = 0; count < n; count++) {
-					vec_jp1[count] = 0;
-				}
-				rw.readColumn(j + 1, vec_jp1, n);
-				rw.changeColumn(j, vec_jp1, n); // j <- j + 1
-
-				times[j + 1] = temp;
-				rw.changeColumn(j + 1, vec_temp, n); // j+1 <- temp=j
-				delete[] vec_temp;
-				delete[]  vec_jp1;
-			}
-		}
-		cout << i << " out of " << am_col - 1 << '\n';
-	}
-
-	/*
-	int n = vertexes + lines + triangles + tetrahedrons;
-	for (int i = 0; i < n - 1; i++) {
-		for (int j = 0; j < n - i - 1; j++) {
-			if (times[j] > times[j + 1]) {
-				// меняем элементы местами
-				int temp = times[j];
-				vector<bool> vec_temp;
-				rw.readColumn(j, vec_temp, size); // с номером j хранится в temp
-
-				times[j] = times[j + 1];
-				vector<bool> vec_jp1;
-				rw.readColumn(j + 1, vec_jp1, size);
-				rw.changeColumn(j, vec_jp1, size); // j <- j + 1
-
-				times[j + 1] = temp;
-				rw.changeColumn(j + 1, vec_temp, size); // j+1 <- temp=j
-
-
-				//надо поменять местами элементы vertexes + j, vertexes + j+1 в каждом столбце
-				// меняем элементы местами
-				for (int col_ind = 0; i < n; i++) {
-					vector<bool> col;
-					rw.readColumn(col_ind, col, size);
-
-					bool temp_bool = col[j];
-					col[j] = col[j + 1];
-					col[j + 1] = temp_bool;
-
-					rw.changeColumn(col_ind, col, size);
-				}
-			}
-		}
-	}*/
-
-
-
-	/*
-	int n = vertexes + lines + triangles + tetrahedrons;
-
-	for (int i = 0; i < lines - 1; i++) {
-		for (int j = 0; j <lines - i - 1; j++) {
-			if (times[vertexes + j] > times[vertexes + j + 1]) {
-				// меняем элементы местами
-				int temp = times[vertexes + j];
-				vector<bool> vec_temp;
-				rw.readColumn(vertexes + j, vec_temp, size); // с номером j хранится в temp
-
-				times[vertexes + j] = times[vertexes + j + 1];
-				vector<bool> vec_jp1;
-				rw.readColumn(vertexes + j + 1, vec_jp1, size);
-				rw.changeColumn(vertexes + j, vec_jp1, size); // j <- j + 1
-
-				times[vertexes + j + 1] = temp;
-				rw.changeColumn(vertexes + j + 1, vec_temp, size); // j+1 <- temp=j
-
-				//надо поменять местами элементы vertexes + j, vertexes + j+1 в каждом столбце
-				// меняем элементы местами
-				for (int col_ind = 0; i < n; i++) {
-					vector<bool> col;
-					rw.readColumn(col_ind, col, size);
-
-					bool temp_bool = col[j];
-					col[j] = col[j + 1];
-					col[j + 1] = temp_bool;
-
-					rw.changeColumn(col_ind, col, size);
-				}
-			}
-		}
-	}
-
-	for (int i = 0; i < triangles - 1; i++) {
-		for (int j = 0; j < triangles - i -1; j++) {
-			if (times[vertexes + lines + j] > times[vertexes + lines + j + 1]) {
-				// меняем элементы местами
-				int temp = times[vertexes + lines + j];
-				vector<bool> vec_temp;
-				rw.readColumn(vertexes + lines + j, vec_temp, size); // с номером j хранится в temp
-
-				times[vertexes + lines + j] = times[vertexes + lines + j + 1];
-				vector<bool> vec_jp1;
-				rw.readColumn(vertexes + lines + j + 1, vec_jp1, size);
-				rw.changeColumn(vertexes + lines + j, vec_jp1, size); // j <- j + 1
-
-				times[vertexes + lines + j + 1] = temp;
-				rw.changeColumn(vertexes + lines + j + 1, vec_temp, size); // j+1 <- temp=j
-
-
-				for (int col_ind = 0; i < n; i++) {
-					vector<bool> col;
-					rw.readColumn(col_ind, col, size);
-
-					bool temp_bool = col[lines + j];
-					col[lines + j] = col[lines + j + 1];
-					col[lines + j + 1] = temp_bool;
-
-					rw.changeColumn(col_ind, col, size);
-				}
-			}
-		}
-	}
-
-	for (int i = 0; i < tetrahedrons - 1; i++) {
-		for (int j = 0; j < tetrahedrons - i - 1; j++) {
-			if (times[vertexes + lines + triangles + j] > times[vertexes + lines + triangles + j + 1]) {
-				// меняем элементы местами
-				int temp = times[vertexes + lines + triangles + j];
-				vector<bool> vec_temp;
-				rw.readColumn(vertexes + lines + triangles + j, vec_temp, size); // с номером j хранится в temp
-
-				times[vertexes + lines + triangles + j] = times[vertexes + lines + triangles + j + 1];
-				vector<bool> vec_jp1;
-				rw.readColumn(vertexes + lines + triangles + j + 1, vec_jp1, size);
-				rw.changeColumn(vertexes + lines + triangles + j, vec_jp1, size); // j <- j + 1
-
-				times[vertexes + lines + triangles + j + 1] = temp;
-				rw.changeColumn(vertexes + lines + triangles + j + 1, vec_temp, size); // j+1 <- temp=j
-
-				for (int col_ind = 0; i < n; i++) {
-					vector<bool> col;
-					rw.readColumn(col_ind, col, size);
-
-					bool temp_bool = col[ lines + triangles + j];
-					col[ lines + triangles + j] = col[lines + triangles + j + 1];
-					col[ lines + triangles + j + 1] = temp_bool;
-
-					rw.changeColumn(col_ind, col, size);
-				}
-			}
-		}
-	}
-	*/
-
-
-	/*
-	int n = vertexes + lines + triangles + tetrahedrons;
-
-	for (int i = 0; i < lines - 1; i++) {
-		for (int j = 0; j < lines - i - 1; j++) {
-			if (times[vertexes + j] > times[vertexes + j + 1]) {
-				// меняем элементы местами
-				int temp = times[vertexes + j];
-				vector<bool> vec_temp;
-				rw.readColumn(vertexes + j, vec_temp, size); // с номером j хранится в temp
-
-				times[vertexes + j] = times[vertexes + j + 1];
-				vector<bool> vec_jp1;
-				rw.readColumn(vertexes + j + 1, vec_jp1, size);
-				rw.changeColumn(vertexes + j, vec_jp1, size); // j <- j + 1
-
-				times[vertexes + j + 1] = temp;
-				rw.changeColumn(vertexes + j + 1, vec_temp, size); // j+1 <- temp=j
-
-
-			}
-		}
-	}
-
-	for (int i = 0; i < triangles - 1; i++) {
-		for (int j = 0; j < triangles - i - 1; j++) {
-			if (times[vertexes + lines + j] > times[vertexes + lines + j + 1]) {
-				// меняем элементы местами
-				int temp = times[vertexes + lines + j];
-				vector<bool> vec_temp;
-				rw.readColumn(vertexes + lines + j, vec_temp, size); // с номером j хранится в temp
-
-				times[vertexes + lines + j] = times[vertexes + lines + j + 1];
-				vector<bool> vec_jp1;
-				rw.readColumn(vertexes + lines + j + 1, vec_jp1, size);
-				rw.changeColumn(vertexes + lines + j, vec_jp1, size); // j <- j + 1
-
-				times[vertexes + lines + j + 1] = temp;
-				rw.changeColumn(vertexes + lines + j + 1, vec_temp, size); // j+1 <- temp=j
-
-
-			}
-		}
-	}
-
-	for (int i = 0; i < tetrahedrons - 1; i++) {
-		for (int j = 0; j < tetrahedrons - i - 1; j++) {
-			if (times[vertexes + lines + triangles + j] > times[vertexes + lines + triangles + j + 1]) {
-				// меняем элементы местами
-				int temp = times[vertexes + lines + triangles + j];
-				vector<bool> vec_temp;
-				rw.readColumn(vertexes + lines + triangles + j, vec_temp, size); // с номером j хранится в temp
-
-				times[vertexes + lines + triangles + j] = times[vertexes + lines + triangles + j + 1];
-				vector<bool> vec_jp1;
-				rw.readColumn(vertexes + lines + triangles + j + 1, vec_jp1, size);
-				rw.changeColumn(vertexes + lines + triangles + j, vec_jp1, size); // j <- j + 1
-
-				times[vertexes + lines + triangles + j + 1] = temp;
-				rw.changeColumn(vertexes + lines + triangles + j + 1, vec_temp, size); // j+1 <- temp=j
-
-			}
-		}
-	}
-	*/
-
-
-}
-
-
 
 
 //всего есть 
@@ -617,12 +368,13 @@ void reducing() {
 	for (int j = 0; j < am_col; j++) {
 		if (j % 50 == 0)
 			cout << j << " out of " << am_col << '\n';
-		if (j != 0 && j % 1000 == 0) {
+		if (j == 10000) {
+			rw.clear2File();
 			for (int i = 0; i < am_col; i++) {
-				rw.clear2File();
+				
 				rw.writeColumn2(array_of_cols[i], n);
 			}
-			cout << " columns have changed " << j << '\n';
+			cout << " columns have written " << j << '\n';
 		}
 
 		///bool* j_col = new bool[n];
@@ -764,46 +516,6 @@ void reading_intervals() {
 		}
 
 	}
-
-	/*
-	for (int i = 0; i < n; i++) {
-		if (lows[i] != -2) { //уже парный
-			if (lows[i] == -1) { //undefined
-				//найти такое k, что low(k) == i. Тогда k - конец, i - старт
-				bool is_paired = false;
-				for (int k = i + 1; k < n; k++) {
-					if (lows[k] == i) {
-						//intervals.push_back({ times[i], times[k] });
-						rw.writeInterval(times[i], times[k]);
-						lows[i] = -2; lows[k] = -2;
-						cout << i << ' ' << k << '\n';
-						is_paired = true;
-						break;
-					}
-				}
-				if (!is_paired) {
-					//intervals.push_back({ times[i], INT32_MAX });  // [i; +inf) - интервал
-					rw.writeInterval(times[i], INT32_MAX);
-					lows[i] = -2;
-					cout << i << '\n';
-				}
-			}
-			else {
-				//надо найти такое j, что j = low(i). Тогда j - старт, i - конец
-				///for (int j = 0; j < n; j++) {
-				//for (int j = i + 1; j < n; j++) {
-				for (int j = 0; j < i; j++) {
-					if (j == lows[i]) {
-						//intervals.push_back({ times[j], times[i] });
-						rw.writeInterval(times[j], times[i]);
-						lows[i] = -2; lows[j] = -2;
-						cout << j << ' ' << i << '\n';
-						break;
-					}
-				}
-			}
-		}
-	}*/
 }
 
 void process() {
@@ -844,22 +556,8 @@ void process() {
 
 	create_dim1();
 
-	//rw.outMatrix(vertexes + lines + triangles + tetrahedrons, n);
-	//rw.outMatrix(vertexes + lines + triangles + tetrahedrons);
-
-
-
-	//cout << "sorting\n";
-
-	//sortMatrix(times, vertexes + lines + triangles + tetrahedrons);
-	//rw.outMatrix(vertexes + lines + triangles + tetrahedrons, n);
-
 	cout << "reducing\n";
 	reducing();
-
-	//rw.outMatrix(vertexes + lines + triangles + tetrahedrons);
-	//rw.outMatrix(vertexes + lines + triangles + tetrahedrons, n);
-
 
 	cout << "reading intervals\n\n\n";
 
@@ -871,8 +569,4 @@ void process() {
 int main()
 {
 	process();
-	/*vector<bool> res;
-	rw.readColumn(1, res, 1);
-	for (int i = 0; i < res.size(); i++)
-		cout << res[i] << ' ';*/
 }
