@@ -6,6 +6,7 @@
 #include <sstream>
 #include <iterator>
 
+#include <thread>
 #include <math.h>
 
 using namespace std;
@@ -296,7 +297,7 @@ void creationOfTriangles(vector<vector<string>>& triangles, vector<int>& triangl
 }
 
 
-int get_rank(double EPS, vector<vector<int>>& a) {
+void get_rank(double EPS, vector<vector<int>>& a, int w) {
 	int m = a.size();
 	int n = a[0].size();
 
@@ -380,7 +381,9 @@ int get_rank(double EPS, vector<vector<int>>& a) {
 		++i; ++j;   // Переходим к следующему минору
 	}
 
-	return i; // Возвращаем число ненулевых строк
+	//return i; // Возвращаем число ненулевых строк
+	rw.closeOpenH2();
+	rw.writeH2(w, i);
 }
 
 
@@ -513,7 +516,7 @@ void deltaMatrix2(vector<vector<int>>& matrix, int max,
 	//То есть edges.size()
 
 	int r = -1;
-
+	std::vector <std::thread> th_vec;
 	//for (int w = 1; w <= max; w++) {
 	for (int w = 1; w <= max - 1; w++) {
 		cout << w << " out of " << max << '\n';
@@ -544,15 +547,21 @@ void deltaMatrix2(vector<vector<int>>& matrix, int max,
 		}
 
 		//получили матрицу matrix
-		if (w >= max - 2) {
+		if (w >= 17) {
 			//посчитаем ее ранг и запишем
 			if (flag) {
-				r = get_rank(0.0000001, matrix);
+				//отправляем в отдельный поток
+				th_vec.push_back(thread(get_rank, 0.0000001, matrix, w));
+				//r = get_rank(0.0000001, matrix);
 			}
-			if (w % 4 == 0)
-				rw.closeOpenH2();
-			rw.writeH2(w, r);
+			
 		}
+		if (th_vec.size() == 4)
+			break;
+	}
+	//всего 4 потока
+	for (int i = 0; i < th_vec.size(); ++i) {
+		th_vec.at(i).join();
 	}
 }
 
@@ -571,6 +580,7 @@ bool vert_is_exist(string& v, vector<string>& arr) {
 	return false;
 }
 
+/*
 //Составим матрицу из путей из A0 (То есть из вершин-элементов)
 void deltaMatrix1(vector<vector<int>>& matrix, vector<string>& vert, int max) {
 	//в матрице будет строк столько, сколько вершин есть в графе
@@ -742,7 +752,7 @@ int get_rank_minors(vector<vector<int>>& matrix) {
 	return min(m, n);
 }
 
-
+*/
 
 
 int main()
